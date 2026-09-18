@@ -381,18 +381,20 @@ html:has(.luce[open]) { overflow: hidden; }
 .frame .cartellino .eur { color: #FF8A4D; }
 
 /* ---------- Bivio: due direzioni nello stesso viaggio ---------- */
-.bivio-scelte { display: grid; grid-template-columns: repeat(2, minmax(11rem, 1fr)); gap: 1rem; margin-top: 1.5rem; text-align: left; }
-.bivio-scelta { display: grid; gap: .35rem; padding: 1.1rem; border: 1px solid color-mix(in srgb, var(--ink) 42%, transparent); border-radius: 5px 20px 5px 20px; text-decoration: none; transition: transform .3s ease, background-color .3s ease, border-color .3s ease; }
-.bivio-scelta:hover, .bivio-scelta:focus-visible { transform: translateY(-.35rem); background: color-mix(in srgb, var(--accent) 18%, transparent); border-color: var(--accent); }
-.bivio-scelta strong { font: 700 1.35rem/1 var(--f-display); }
-.bivio-scelta > span:last-child { color: var(--soft); font-size: .9rem; }
+.bivio-corsia { display: grid; gap: .35rem; width: min(20rem, 38vw); padding: 1rem 1.2rem; border: 2px solid color-mix(in srgb, var(--ink) 55%, transparent); border-radius: 8px 26px 8px 26px; text-decoration: none; text-shadow: none; transition: transform .35s ease, background-color .35s ease, border-color .35s ease, box-shadow .35s ease; }
+.bivio-corsia:hover, .bivio-corsia:focus-visible { transform: translate(-50%, -50%) scale(1.06) !important; background: color-mix(in srgb, var(--accent) 24%, transparent); border-color: var(--accent); box-shadow: 0 1rem 2.5rem rgba(0,0,0,.3); }
+.bivio-corsia strong { font: 700 clamp(1.25rem, 2.2vw, 1.8rem)/1 var(--f-display); }
+.bivio-corsia > span:last-child { color: var(--soft); font-size: .9rem; }
+.bivio-freccia { position: absolute; top: -.9rem; font-size: 2.3rem; color: var(--accent); line-height: 1; }
+.bivio-corsia-sinistra .bivio-freccia { left: .8rem; }
+.bivio-corsia-destra .bivio-freccia { right: .8rem; }
 .bivio-num { color: var(--accent); font: 600 .85rem/1 var(--f-flap); }
-.bivio-scelta-alt { border-radius: 20px 5px 20px 5px; }
+.bivio-corsia-destra { border-radius: 26px 8px 26px 8px; }
 .bivio-line { width: 1px; height: 18vh; background: linear-gradient(var(--accent), transparent); transform-origin: 50% 0; opacity: .6; }
 .bivio-line-left { rotate: 28deg; }
 .bivio-line-right { rotate: -28deg; }
-.bivio-scelta:first-child { background: linear-gradient(125deg, color-mix(in srgb, #B0111C 22%, transparent), transparent 70%); }
-.bivio-scelta-alt { background: linear-gradient(125deg, color-mix(in srgb, #17466B 22%, transparent), transparent 70%); }
+.bivio-corsia-sinistra { background: linear-gradient(125deg, color-mix(in srgb, #B0111C 24%, transparent), transparent 70%); }
+.bivio-corsia-destra { background: linear-gradient(225deg, color-mix(in srgb, #17466B 28%, transparent), transparent 70%); }
 
 /* ---------- Carrello laterale ---------- */
 .carrello-backdrop { position: fixed; inset: 0; z-index: 29; background: rgba(4, 5, 7, .65); opacity: 0; pointer-events: none; transition: opacity .3s ease; }
@@ -441,6 +443,7 @@ body.carrello-aperto { overflow: hidden; }
 /* Il riquadro del testo non ruba i tocchi alle foto: cliccabili solo i suoi link */
 .is-3d .plane.copy.is-live, .is-3d .plane.copy.is-live * { pointer-events: none; }
 .is-3d .plane.copy.is-live a, .is-3d .plane.copy.is-live button { pointer-events: auto; }
+.is-3d .plane.bivio-corsia.is-live { pointer-events: auto; }
 
 /* ---------- Luce del cursore sulle foto ---------- */
 @property --mx { syntax: "<number>"; inherits: true; initial-value: .3; }
@@ -642,10 +645,9 @@ html:not(.is-3d) .animata { display: block; margin: .8rem 0 0; font-size: .85rem
   .is-3d .tachimetro { width: 58vw; }
   .prodotto-grid { grid-template-columns: 1fr; }
   .prodotto-img { max-height: 38vh; }
-  .bivio-scelte { grid-template-columns: 1fr; }
-  .is-3d .bivio-scelte { gap: .55rem; margin-top: 1rem; }
-  .is-3d .bivio-scelta { padding: .75rem; }
-  .is-3d .bivio-scelta strong { font-size: 1.1rem; }
+  .is-3d .bivio-corsia { width: min(14rem, 42vw); padding: .7rem .75rem; }
+  .is-3d .bivio-corsia strong { font-size: 1.1rem; }
+  .is-3d .bivio-corsia > span:last-child { font-size: .75rem; }
   .is-3d .fiamma { width: 34vw; }
   .is-3d .fiamma.piccola { width: 20vw; }
   .is-3d .sombrero { width: 40vw; }
