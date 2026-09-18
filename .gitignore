@@ -1,0 +1,12 @@
+# Si pubblica solo il sito: le note interne (DESIGN.md) restano in locale
+*
+!.gitignore
+!index.html
+!styles.css
+!script.js
+!assets/
+assets/*
+!assets/favicon.svg
+!assets/foto/
+assets/foto/*
+!assets/foto/*.webp
