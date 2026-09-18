@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "source": "shopify",
+  "status": "demo",
+  "checkout": "https://ilmessicanofficial.com/collections/all",
+  "shipping": {
+    "italy": 3.99,
+    "freeFrom": 100
+  },
+  "discounts": {
+    "MESSICANO10": 10
+  },
+  "notes": "Sostituire gli ID e i dati locali con il catalogo Storefront API prima della pubblicazione."
+}

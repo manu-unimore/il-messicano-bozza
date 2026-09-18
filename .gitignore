@@ -4,6 +4,7 @@
 !index.html
 !styles.css
 !script.js
+!catalog.json
 !assets/
 assets/*
 !assets/favicon.svg
