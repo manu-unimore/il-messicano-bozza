@@ -296,6 +296,8 @@ html:not(.is-3d) .rapidi { margin-left: auto; }
 .shop-search input, .shop-tools select { min-height: 2.35rem; border: 1px solid color-mix(in srgb, var(--ink) 55%, transparent); border-radius: 999px; background: color-mix(in srgb, var(--sky-a) 70%, transparent); color: var(--ink); padding: .45rem .8rem; font: .85rem var(--f-body); }
 .shop-search input { width: 10rem; }
 .shop-tools select { max-width: 9rem; }
+html:not(.is-3d) .shop-tools { position: static; flex-basis: 100%; order: 3; }
+html:not(.is-3d) .index { order: 4; }
 
 /* ---------- Barra di avanzamento ---------- */
 .avanzamento { display: none; }
@@ -382,6 +384,7 @@ html:has(.luce[open]) { overflow: hidden; }
 
 /* ---------- Bivio: due direzioni nello stesso viaggio ---------- */
 .bivio-corsia { display: grid; gap: .35rem; width: min(20rem, 38vw); padding: 1rem 1.2rem; border: 2px solid color-mix(in srgb, var(--ink) 55%, transparent); border-radius: 8px 26px 8px 26px; text-decoration: none; text-shadow: none; transition: transform .35s ease, background-color .35s ease, border-color .35s ease, box-shadow .35s ease; }
+.is-3d .bivio-corsia { width: min(20rem, 38vw); }
 .bivio-corsia:hover, .bivio-corsia:focus-visible { transform: translate(-50%, -50%) scale(1.06) !important; background: color-mix(in srgb, var(--accent) 24%, transparent); border-color: var(--accent); box-shadow: 0 1rem 2.5rem rgba(0,0,0,.3); }
 .bivio-corsia strong { font: 700 clamp(1.25rem, 2.2vw, 1.8rem)/1 var(--f-display); }
 .bivio-corsia > span:last-child { color: var(--soft); font-size: .9rem; }
@@ -627,6 +630,7 @@ html:not(.is-3d) .animata { display: block; margin: .8rem 0 0; font-size: .85rem
   .shop-search { flex: 1; }
   .shop-search input { width: 100%; }
   .shop-tools select { max-width: 45%; }
+  .is-3d .reduced-toggle { top: auto; bottom: 3.7rem; }
   .is-3d .index { bottom: .4rem; overflow-x: auto; scrollbar-width: none; }
   .is-3d .index ol { flex-wrap: nowrap; white-space: nowrap; padding-bottom: .2rem; }
   .is-3d .minimap { top: 7.8rem; right: var(--gutter); width: 9.5rem; }
