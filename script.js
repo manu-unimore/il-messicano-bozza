@@ -15,6 +15,172 @@
   }));
   const navLinks = [...document.querySelectorAll('.index a, .brand')];
   const byId = (id) => chapters.find((c) => c.id === id);
+  const feedback = document.querySelector('#cart-feedback');
+  const reducedToggle = document.querySelector('.reduced-toggle');
+  const announce = (message) => { if (feedback) feedback.textContent = message; };
+  const setReduced = (reduced) => {
+    root.classList.toggle('calmo', reduced);
+    reducedToggle?.setAttribute('aria-pressed', String(reduced));
+    if (reducedToggle) reducedToggle.textContent = reduced ? 'Riattiva effetti 3D' : 'Riduci effetti 3D';
+    try { localStorage.setItem('messicano-reduced-3d', String(reduced)); } catch {}
+  };
+  if (reducedToggle) {
+    reducedToggle.addEventListener('click', () => setReduced(!root.classList.contains('calmo')));
+    reducedToggle.setAttribute('aria-pressed', String(root.classList.contains('calmo')));
+    reducedToggle.textContent = root.classList.contains('calmo') ? 'Riattiva effetti 3D' : 'Riduci effetti 3D';
+  }
+
+  /* ---------- Carrello: demo locale, pronto per essere sostituito da Shopify ---------- */
+  const CART_KEY = 'messicano-cart-v1';
+  const cart = (() => {
+    const panel = document.querySelector('#carrello');
+    if (!panel) return null;
+    const body = panel.querySelector('.carrello-body');
+    const total = panel.querySelector('.carrello-totale strong');
+    const checkout = panel.querySelector('.carrello-checkout');
+    const triggers = [...document.querySelectorAll('.cart-trigger')];
+    const counts = [...document.querySelectorAll('.cart-count')];
+    const backdrop = document.querySelector('.carrello-backdrop');
+    const couponInput = panel.querySelector('.coupon-input');
+    const couponStatus = panel.querySelector('.coupon-status');
+    const shippingStatus = panel.querySelector('.spedizione-status');
+    let coupon = '';
+    let catalog = { shipping: { italy: 3.99, freeFrom: 100 }, discounts: { MESSICANO10: 10 } };
+    fetch('catalog.json').then((r) => r.ok ? r.json() : catalog).then((data) => { catalog = { ...catalog, ...data }; render(); }).catch(() => {});
+    let items = [];
+    try { items = JSON.parse(localStorage.getItem(CART_KEY) || '[]'); } catch { items = []; }
+    const euro = (n) => `${n.toFixed(2).replace('.', ',')} €`;
+    const save = () => { localStorage.setItem(CART_KEY, JSON.stringify(items)); render(); };
+    const open = () => {
+      panel.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('carrello-aperto');
+      triggers.forEach((b) => b.setAttribute('aria-expanded', 'true'));
+      panel.querySelector('.carrello-chiudi').focus();
+    };
+    const close = () => {
+      panel.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('carrello-aperto');
+      triggers.forEach((b) => b.setAttribute('aria-expanded', 'false'));
+    };
+    const add = (item) => {
+      const found = items.find((i) => i.id === item.id && i.variant === item.variant);
+      if (found) found.qty += item.qty;
+      else items.push(item);
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: 'add_to_cart', ecommerce: { items: [{ item_name: item.name, price: item.price, quantity: item.qty }] } });
+      save(); announce(`${item.name} aggiunto al carrello. Quantità ${items.reduce((sum, i) => sum + i.qty, 0)}.`); open();
+    };
+    const render = () => {
+      const quantity = items.reduce((sum, i) => sum + i.qty, 0);
+      const subtotal = items.reduce((sum, i) => sum + i.price * i.qty, 0);
+      const discount = coupon && catalog.discounts?.[coupon] ? subtotal * catalog.discounts[coupon] / 100 : 0;
+      const shipping = subtotal && subtotal - discount < (catalog.shipping?.freeFrom || 100) ? (catalog.shipping?.italy || 3.99) : 0;
+      const amount = subtotal - discount + shipping;
+      counts.forEach((el) => { el.textContent = quantity; });
+      total.textContent = euro(amount);
+      checkout.disabled = !items.length;
+      couponStatus.textContent = coupon ? `Sconto ${coupon}: −${euro(discount)}` : '';
+      shippingStatus.textContent = items.length ? shipping ? `Spedizione Italia: ${euro(shipping)} · gratis oltre ${catalog.shipping.freeFrom} €` : 'Spedizione Italia gratuita' : '';
+      body.innerHTML = items.length ? items.map((item, index) => `
+        <article class="carrello-item">
+          <img src="${item.image}" alt="">
+          <div><strong>${item.name}</strong><span>${item.variant} · ${euro(item.price)}</span>
+            <div class="carrello-qty"><button type="button" data-cart-action="decrease" data-index="${index}" aria-label="Riduci ${item.name}">−</button><b>${item.qty}</b><button type="button" data-cart-action="increase" data-index="${index}" aria-label="Aumenta ${item.name}">+</button><button type="button" data-cart-action="remove" data-index="${index}">Rimuovi</button></div>
+          </div>
+        </article>`).join('') : '<p class="carrello-vuoto">Il carrello è vuoto.<br><span>Scorri e scegli il tuo prossimo pezzo.</span></p>';
+    };
+    panel.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-cart-action]');
+      if (!button) return;
+      const item = items[Number(button.dataset.index)];
+      if (!item) return;
+      if (button.dataset.cartAction === 'remove') items.splice(Number(button.dataset.index), 1);
+      if (button.dataset.cartAction === 'increase') item.qty += 1;
+      if (button.dataset.cartAction === 'decrease') item.qty -= 1;
+      if (item.qty <= 0) items = items.filter((i) => i !== item);
+      save();
+    });
+    triggers.forEach((button) => button.addEventListener('click', () => panel.getAttribute('aria-hidden') === 'true' ? open() : close()));
+    panel.querySelector('.carrello-chiudi').addEventListener('click', close);
+    backdrop.addEventListener('click', close);
+    panel.querySelector('.coupon-apply').addEventListener('click', () => {
+      const value = couponInput.value.trim().toUpperCase();
+      if (!value) { coupon = ''; couponStatus.textContent = ''; render(); return; }
+      if (!catalog.discounts?.[value]) { couponStatus.textContent = 'Codice non valido'; return; }
+      coupon = value; render();
+    });
+    checkout.addEventListener('click', () => window.alert('Checkout Shopify non ancora collegato: questa è una bozza del carrello.'));
+    render();
+    return { add };
+  })();
+
+  const prezzoDaTesto = (text) => {
+    const matches = [...text.replace(',', '.').matchAll(/(\d+(?:\.\d{1,2})?)/g)];
+    return matches.length ? Number(matches[matches.length - 1][1]) : 0;
+  };
+  document.querySelectorAll('.photo:not(.feed):not(.tachimetro)').forEach((photo) => {
+    const button = photo.querySelector('.zoom');
+    const label = photo.querySelector('.cartellino b');
+    const price = photo.querySelector('.cartellino .eur');
+    if (!button || !label || !price || !cart) return;
+    const addButton = document.createElement('button');
+    addButton.className = 'add-cart';
+    addButton.type = 'button';
+    addButton.textContent = 'Aggiungi';
+    const section = photo.closest('.ch')?.id || 'shop';
+    const needsSize = ['criminal', 'fuego'].includes(section);
+    let variantSelect;
+    if (needsSize) {
+      variantSelect = document.createElement('select');
+      variantSelect.className = 'variant-select';
+      variantSelect.setAttribute('aria-label', `Scegli la taglia per ${label.textContent.trim()}`);
+      ['S', 'M', 'L', 'XL'].forEach((size) => variantSelect.add(new Option(`Taglia ${size}`, size)));
+      photo.querySelector('.cartellino').append(variantSelect);
+    }
+    addButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const name = label.textContent.trim();
+      const variant = variantSelect ? `Taglia ${variantSelect.value}` : 'Unica';
+      cart.add({ id: button.dataset.url, name, price: prezzoDaTesto(price.textContent), image: button.querySelector('img').src, variant, qty: 1 });
+    });
+    photo.querySelector('.cartellino').append(addButton);
+    const detailsButton = document.createElement('button');
+    detailsButton.className = 'product-details';
+    detailsButton.type = 'button';
+    detailsButton.textContent = 'Dettagli';
+    detailsButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const dialog = document.querySelector('#prodotto-dialog');
+      dialog.querySelector('.prodotto-img').src = button.querySelector('img').currentSrc || button.querySelector('img').src;
+      dialog.querySelector('.prodotto-img').alt = button.querySelector('img').alt;
+      dialog.querySelector('#prodotto-titolo').textContent = label.textContent.trim();
+      dialog.querySelector('.prodotto-prezzo').textContent = price.textContent.trim();
+      dialog.querySelector('.prodotto-aggiungi').onclick = () => { addButton.click(); dialog.close(); };
+      dialog.showModal();
+    });
+    photo.querySelector('.cartellino').append(detailsButton);
+  });
+
+  const productDialog = document.querySelector('#prodotto-dialog');
+  productDialog?.querySelector('.prodotto-chiudi').addEventListener('click', () => productDialog.close());
+
+  /* ---------- Ricerca e filtri: nasconde solo i piani del catalogo ---------- */
+  const search = document.querySelector('#shop-search');
+  const filter = document.querySelector('#shop-filter');
+  const productCards = [...document.querySelectorAll('.photo:not(.feed):not(.tachimetro)')];
+  const applyFilter = () => {
+    const query = (search?.value || '').trim().toLowerCase();
+    const category = filter?.value || 'all';
+    productCards.forEach((card) => {
+      const text = card.textContent.toLowerCase();
+      const section = card.closest('.ch')?.id || '';
+      const isClothing = ['criminal', 'fuego'].includes(section);
+      const matchesCategory = category === 'all' || (category === 'abbigliamento' ? isClothing : !isClothing);
+      card.classList.toggle('catalogo-nascosto', !matchesCategory || !text.includes(query));
+    });
+  };
+  search?.addEventListener('input', applyFilter);
+  filter?.addEventListener('change', applyFilter);
 
   let goTo;
 
@@ -70,9 +236,25 @@
   const chiusura = document.querySelector('.chiusura');
   const tachi = document.querySelector('.tachimetro');
   const barra = document.querySelector('.avanzamento i');
+  const minimap = document.querySelector('.minimap');
+  const minimapTitle = document.querySelector('.minimap-title');
+  const minimapNum = document.querySelector('.minimap-num');
+  const minimapBar = document.querySelector('.minimap-track i');
+  const minimapLinks = document.querySelector('.minimap-links ol');
+  const prevButton = document.querySelector('.chapter-prev');
+  const nextButton = document.querySelector('.chapter-next');
   const themeMeta = document.querySelector('meta[name="theme-color"]');
   const ingresso = document.querySelector('.ingresso');
   const lastZ = chapters[chapters.length - 1].z;
+
+  if (minimapLinks) {
+    minimapLinks.innerHTML = chapters.map((ch, i) => `<li><a href="#${ch.id}" data-chapter="${ch.id}" aria-label="Vai a ${ch.label}"><span>${String(i + 1).padStart(2, '0')}</span><b>${ch.label}</b></a></li>`).join('');
+    minimapLinks.querySelectorAll('a').forEach((a) => a.addEventListener('click', (event) => {
+      event.preventDefault();
+      goTo(a.dataset.chapter);
+      history.replaceState(null, '', `#${a.dataset.chapter}`);
+    }));
+  }
 
   const planes = [];
   chapters.forEach((ch) => {
@@ -141,6 +323,7 @@
       if (live !== p.live) {
         p.live = live;
         p.el.classList.toggle('is-live', live);
+        if (p.kind === 'photo') p.el.classList.toggle('near-camera', live && d < 300);
       }
     }
 
@@ -160,6 +343,7 @@
       const v = Math.min(Math.max(cam / lastZ, 0), 1);
       if (barra._v !== v) { barra._v = v; barra.style.transform = `scaleX(${v.toFixed(4)})`; }
     }
+    if (minimapBar) minimapBar.style.transform = `scaleX(${Math.min(Math.max(cam / lastZ, 0), 1).toFixed(4)})`;
 
     // Fondo: dissolvenza tra la tappa corrente e la successiva a metà tragitto
     let i = 0;
@@ -221,6 +405,14 @@
       if (a.getAttribute('href') === `#${ch.id}`) a.setAttribute('aria-current', 'step');
       else a.removeAttribute('aria-current');
     });
+    if (minimap) minimap.dataset.chapter = ch.id;
+    if (minimapTitle) minimapTitle.textContent = ch.label;
+    if (minimapNum) minimapNum.textContent = `${String(i + 1).padStart(2, '0')} / ${String(chapters.length).padStart(2, '0')}`;
+    minimapLinks?.querySelectorAll('a').forEach((a) => {
+      if (a.dataset.chapter === ch.id) a.setAttribute('aria-current', 'step'); else a.removeAttribute('aria-current');
+    });
+    if (prevButton) prevButton.disabled = i === 0;
+    if (nextButton) nextButton.disabled = i === chapters.length - 1;
     setClock(ch, animate);
   }
 
@@ -315,8 +507,22 @@
     } else {
       wake();
     }
+    if (document.activeElement instanceof HTMLElement && document.activeElement.closest('.minimap, .chapter-controls')) {
+      ch.el.setAttribute('tabindex', '-1');
+      ch.el.focus({ preventScroll: true });
+    }
     return true;
   };
+
+  prevButton?.addEventListener('click', () => goTo(chapters[Math.max(0, current - 1)].id));
+  nextButton?.addEventListener('click', () => goTo(chapters[Math.min(chapters.length - 1, current + 1)].id));
+  document.addEventListener('keydown', (event) => {
+    if (event.altKey || event.ctrlKey || event.metaKey || event.defaultPrevented) return;
+    const tag = event.target?.tagName;
+    if (['INPUT', 'SELECT', 'TEXTAREA', 'BUTTON'].includes(tag) || event.target?.isContentEditable) return;
+    if (event.key === 'ArrowLeft' && current > 0) { event.preventDefault(); goTo(chapters[current - 1].id); }
+    if (event.key === 'ArrowRight' && current < chapters.length - 1) { event.preventDefault(); goTo(chapters[current + 1].id); }
+  });
 
   // Scintille: piccoli riflessi sui punti cromati delle foto di ricambi e accessori
   const conScintille = [...document.querySelectorAll('#fuego .zoom, #garage .zoom, #box .zoom')];

@@ -19,9 +19,10 @@
 <script>
   // Versione in profondità sempre attiva (anche su telefono), tranne con ?piatto.
   // Con "Riduci movimento" resta la profondità ma non gli effetti più mossi (classe .calmo).
+  const riduciSalvato = (() => { try { return localStorage.getItem('messicano-reduced-3d') === 'true'; } catch { return false; } })();
   if (!/[?&]piatto(=|&|$)/.test(location.search)) {
     document.documentElement.classList.add('is-3d');
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('calmo');
+    if (riduciSalvato || matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('calmo');
   }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,6 +41,18 @@
   "description": "Shop ufficiale del Messicano: abbigliamento, protezioni e ricambi per chi va in moto.",
   "email": "ilmessicano.shopify@gmail.com",
   "currenciesAccepted": "EUR",
+  "paymentAccepted": "Credit Card, PayPal",
+  "hasMerchantReturnPolicy": {
+    "@type": "MerchantReturnPolicy",
+    "applicableCountry": "IT",
+    "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+    "merchantReturnDays": 14
+  },
+  "shippingDetails": {
+    "@type": "OfferShippingDetails",
+    "shippingRate": { "@type": "MonetaryAmount", "value": "3.99", "currency": "EUR" },
+    "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "IT" }
+  },
   "sameAs": [
     "https://ilmessicanofficial.com/",
     "https://www.instagram.com/ilmessicanofficial/",
@@ -56,7 +69,8 @@
   Foto e testi presi da ilmessicanofficial.com il 18/09/2026 (catalogo pubblico Shopify).
   I prezzi sono quelli di quel giorno: prima di pubblicare vanno risincronizzati con lo shop,
   oppure sostituiti da un collegamento automatico al catalogo (vedi DESIGN.md).
-  Ogni prodotto rimanda alla sua scheda su ilmessicanofficial.com: il carrello resta lì.
+  In questa bozza il catalogo e il carrello vivono nella pagina; il checkout Shopify si collega
+  quando il sito sarà operativo, senza inserire qui token o credenziali.
 -->
 <a class="skip" href="#contenuto">Salta al contenuto</a>
 
@@ -92,13 +106,20 @@
   </p>
   <div class="rapidi">
     <a class="btn-tondo" href="https://www.instagram.com/ilmessicanofficial/" target="_blank" rel="noopener" aria-label="Il Messicano su Instagram"><svg aria-hidden="true"><use href="#ig"/></svg></a>
-    <a class="btn" href="https://ilmessicanofficial.com/collections/all" target="_blank" rel="noopener">Vai allo shop</a>
+    <button class="btn cart-trigger" type="button" aria-controls="carrello" aria-expanded="false">Carrello <span class="cart-count">0</span></button>
+  </div>
+  <div class="shop-tools" role="search">
+    <label class="shop-search"><span class="sr-only">Cerca prodotti</span><input id="shop-search" type="search" placeholder="Cerca prodotti" autocomplete="off"></label>
+    <select id="shop-filter" aria-label="Filtra prodotti">
+      <option value="all">Tutto il catalogo</option><option value="abbigliamento">Abbigliamento</option><option value="accessori">Accessori</option>
+    </select>
   </div>
   <div class="avanzamento" aria-hidden="true"><i></i></div>
   <nav class="index" aria-label="Tappe">
     <ol>
       <li><a href="#pista"><span class="n">2T</span> Il Messicano</a></li>
       <li><a href="#brand">Il brand</a></li>
+      <li><a href="#bivio">Scegli il percorso</a></li>
       <li><a href="#criminal">Magliette e felpe</a></li>
       <li><a href="#fuego">In sella</a></li>
       <li><a href="#garage">Per la moto</a></li>
@@ -107,12 +128,24 @@
       <li><a href="#strada"><span class="n">3,99</span> Spedizioni</a></li>
     </ol>
   </nav>
+  <aside class="minimap" aria-label="Navigazione del percorso">
+    <p class="minimap-tappa"><span class="minimap-num">01</span><span class="minimap-title">Il Messicano</span></p>
+    <div class="minimap-track"><i></i></div>
+    <nav class="minimap-links" aria-label="Capitoli"><ol></ol></nav>
+    <div class="chapter-controls">
+      <button class="chapter-prev btn btn-ghost" type="button" aria-label="Capitolo precedente">← <span>Indietro</span></button>
+      <button class="chapter-next btn btn-ghost" type="button" aria-label="Capitolo successivo"><span>Avanti</span> →</button>
+    </div>
+  </aside>
+  <button class="reduced-toggle btn btn-ghost" type="button" aria-pressed="false">Riduci effetti 3D</button>
 </header>
 
 <div class="stage">
+  <div class="road" aria-hidden="true"><div class="road-surface"></div><i></i><i></i><i></i><i></i><i></i></div>
   <div class="skies" aria-hidden="true">
     <div class="sky" data-tone="pista"></div>
     <div class="sky" data-tone="brand"></div>
+    <div class="sky" data-tone="bivio"></div>
     <div class="sky" data-tone="criminal"></div>
     <div class="sky" data-tone="fuego"></div>
     <div class="sky" data-tone="garage"></div>
@@ -127,7 +160,7 @@
         <p class="ora">Due tempi</p>
         <h1 id="t-pista">Il Messicano <span class="sub">Shop ufficiale</span></h1>
         <p class="motto">Nato dalla velocità, <em>cucito in Italia</em>.</p>
-        <p class="lead">Abbigliamento, protezioni e ricambi per chi sta in sella: Criminal, Fuego, Too Fast for Chicas. Spedizione gratis in Italia oltre 100&nbsp;€.</p>
+        <p class="lead">Abbigliamento, protezioni e ricambi per chi sta in sella: Criminal, Fuego, Too Fast for Chicas. Esplora, aggiungi al carrello e prepara il tuo ordine. Spedizione gratis in Italia oltre 100&nbsp;€.</p>
         <p class="hint" aria-hidden="true"><span class="hint-line"></span><span class="hint-wheel">Scorri con la rotella: si parte</span><span class="hint-touch">Scorri col dito: si parte</span></p>
         <p class="semplice"><a href="?piatto">Versione semplice, senza animazioni</a></p>
         <p class="animata"><a href="./">Versione animata, in profondità</a></p>
@@ -170,6 +203,24 @@
         <figcaption class="cartellino"><b>Adesivi Calienti</b><span class="eur"><s>14,99 €</s>12,99 €</span></figcaption>
       </figure>
       <div class="plane deco sombrero" data-dz="860" data-x="56" data-y="-38" data-xm="38" data-ym="-46" aria-hidden="true"><svg><use href="#sombrero"/></svg></div>
+    </section>
+
+    <section class="ch bivio" id="bivio" data-tone="brand" data-z="2800" data-code="VIA" data-label="scegli il tuo percorso" aria-labelledby="t-bivio">
+      <div class="plane copy center" data-x="0" data-y="-4" data-xm="0" data-ym="8">
+        <p class="ora">Il bivio</p>
+        <h2 id="t-bivio">Da che parte vai?</h2>
+        <p class="lead">Due strade, una sola attitudine. Scegli il tuo percorso e porta il Messicano con te.</p>
+        <div class="bivio-scelte">
+          <a class="bivio-scelta" href="#criminal">
+            <span class="bivio-num">01</span><strong>Abbigliamento</strong><span>Maglie, felpe e drop limitati</span>
+          </a>
+          <a class="bivio-scelta bivio-scelta-alt" href="#garage">
+            <span class="bivio-num">02</span><strong>Accessori</strong><span>Per te, per la moto, per partire</span>
+          </a>
+        </div>
+      </div>
+      <div class="plane deco bivio-line bivio-line-left" data-dz="340" data-x="-27" data-y="23" data-xm="-22" data-ym="28" aria-hidden="true"></div>
+      <div class="plane deco bivio-line bivio-line-right" data-dz="340" data-x="27" data-y="23" data-xm="22" data-ym="28" aria-hidden="true"></div>
     </section>
 
     <section class="ch" id="criminal" data-tone="criminal" data-z="3200" data-code="CRIME" data-label="Criminal" aria-labelledby="t-criminal">
@@ -387,6 +438,9 @@
           <div><dt>Email</dt><dd><a href="mailto:ilmessicano.shopify@gmail.com">ilmessicano.shopify@gmail.com</a></dd></div>
         </dl>
         <p class="note">Il reso è a carico tuo: l&rsquo;articolo deve tornare come l&rsquo;hai ricevuto, con i cartellini e l&rsquo;imballo originale. Scrivici prima di spedirlo, poi mandaci il codice di tracking.</p>
+        <div class="trust-strip" aria-label="Garanzie di acquisto">
+          <span>Pagamento sicuro Shopify</span><span>Spedizione tracciata</span><span>Reso entro 14 giorni</span>
+        </div>
         <p class="actions">
           <a class="btn" href="https://ilmessicanofficial.com/collections/all" target="_blank" rel="noopener">Vai allo shop</a>
           <a class="btn btn-ghost" href="mailto:ilmessicano.shopify@gmail.com">Scrivici</a>
@@ -448,6 +502,27 @@
   <p class="luce-prezzo"></p>
   <p class="luce-azioni"><a class="luce-link btn" href="#" target="_blank" rel="noopener">Vedi sullo shop</a></p>
 </dialog>
+<p class="sr-only" id="cart-feedback" role="status" aria-live="polite" aria-atomic="true"></p>
+<dialog class="prodotto-dialog" id="prodotto-dialog" aria-labelledby="prodotto-titolo">
+  <button class="prodotto-chiudi btn btn-ghost" type="button">Chiudi</button>
+  <div class="prodotto-grid"><img class="prodotto-img" alt=""><div><p class="ora">Dettagli prodotto</p><h2 id="prodotto-titolo"></h2><p class="prodotto-prezzo"></p><p class="prodotto-desc">Un pezzo del Messicano pensato per accompagnarti tra strada, pista e vita di tutti i giorni.</p><div class="prodotto-trust">✓ Reso entro 14 giorni &nbsp; ✓ Spedizione tracciata</div><button class="btn prodotto-aggiungi" type="button">Aggiungi al carrello</button></div></div>
+</dialog>
+<aside class="carrello" id="carrello" aria-labelledby="carrello-titolo" aria-hidden="true">
+  <div class="carrello-head">
+    <div><p class="ora">Il tuo ordine</p><h2 id="carrello-titolo">Carrello <span class="cart-count">0</span></h2></div>
+    <button class="carrello-chiudi btn btn-ghost" type="button" aria-label="Chiudi carrello">Chiudi</button>
+  </div>
+  <div class="carrello-body"></div>
+  <div class="carrello-foot">
+    <p class="carrello-totale"><span>Totale</span><strong>0,00 €</strong></p>
+    <label class="coupon-label">Codice sconto <span><input class="coupon-input" type="text" placeholder="MESSICANO10" maxlength="20"><button class="coupon-apply" type="button">Applica</button></span></label>
+    <p class="coupon-status" role="status"></p>
+    <p class="spedizione-status"></p>
+    <button class="btn carrello-checkout" type="button" disabled>Vai al checkout</button>
+    <p class="carrello-nota">Bozza: il checkout Shopify sarà collegato quando il sito sarà operativo. Pagamenti protetti e dati ordine saranno gestiti da Shopify.</p>
+  </div>
+</aside>
+<div class="carrello-backdrop" aria-hidden="true"></div>
 <div class="spacer" aria-hidden="true"></div>
 </body>
 </html>
