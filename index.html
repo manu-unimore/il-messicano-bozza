@@ -27,10 +27,15 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Figtree:wght@400;600&family=Oswald:wght@600&display=swap">
-<!-- solo le lettere di "IL MESSICANO" per l'insegna: pochi KB -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&text=ILMESCANO%20&display=swap">
-<link rel="stylesheet" href="styles.css?v=4">
+<!-- Bricolage chiesto come istanza fissa (opsz 48, wdth 82, wght 760): sono gli unici valori
+     che il sito usa, e Google serve 78 KB invece dei 128 KB del font a tre assi variabili. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@48,82,760&family=Figtree:wght@400;600&family=Oswald:wght@600&display=swap">
+<!-- L'insegna d'ingresso e' la prima cosa che si vede: Anton (solo le lettere di "IL MESSICANO",
+     1,1 KB) e' incorporato qui, cosi' non serve una seconda richiesta bloccante. -->
+<style>@font-face{font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;src:url(data:font/woff2;base64,d09GMgABAAAAAARkAA4AAAAAB9wAAAQRAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGhYbYBwoBmAAZBEICoUYhA0LGAABNgIkAywEIAWEDAcgG0gGyAQeAE/7FzRF2nUn96SByKyDqHb/Ox9i//97x41lPc3/Ek3pj33bG/vWXNRJKM86UTY3eCAJBQ5piFevA/hCRlQiAFbUuIgggTl6Bix0wg8xISkjH48hNWOGsQDyO+JZUTK476hhmDIuoMqImBCSIp4o1JamPHCAiwdN3EIXmUebGrKiiOcKknRIWIGhw+AvPwU2JbJI0/2kObjyDNL19wy6OTKs7/gx3MBBnnngf5WsRY0QdzkQVj/OGd5TdGIIpP4CidJYBoGQTHbSE89Hmx3EEk8iqWSR16KBG33GBffX7hvu6+5r7svui+5zv49wywUEtxs7N6jQFG2H42HB8zODPMkwUuzFlyJLkiSZ5PZWWbFZPNRe6uQGEydVWSdUVU6cXJ5fblMn2ydaSy3FVeokS80il2Cc/a662OlEtEozb1kWvUGZcVNdXC9INnHGG3WyXbSKNjFwqJNtE9ksYJ8IKJonWCeZrsuMtonWSQrINrN+FcqMN6WLBeNMyyLpPWfNIpck2JjhVBffFma6XIWFLuGT//ht0SrMvGZZdIUZzpyCl04nM97SUPRaFL1V4/iDLfONZ698/PTjp532bsGw5aOnca8OtsynrWWfXmAZp2c2b/WmSSuvgB3y6+mefGG//uV3rl48sn829VbZ8HOLfSrlrHE9fNsnhY9MPdytd6fU8MjazC+/eoGGot/ILy3KSM9YPbKIKBQ9H0VHQ9GrMZwZ1AsNRW9uTvA1B/i2QdHjfrXu+TXC1ufXX9FQ9EGWjunp+Sh6sSqNGMFP9tcf/P9TwsfvfeV0vvfVxwk/ffD/8/jszWWztOK5pbldk/jB/tObH5Qj5e9Fdkrw8kmOyWk3RKtNjN269sS++o9efHPv50eCsd/ETvM79hjWuXPXgv2Pbj3sOyPy0OQ/zzWHBXERxDanJoQffFRlj/jNZDc9KrzrfnUpWfme8ciR/9b+11c9qoYRKEuU+0FYyvPX/7f231Hq0aX2SVX6H036mLbSY2KkdDThBVGSF5rhTzTpXzTpU2Kkk/QQ9BYsp1KMkWoMGJAvEyb6bQq/bBbSx/izwAQsfI+JeKBjEj6cwGRasg4zkEQ2ptCSIMVDPg0DGMMYRjCaMLzxlpvrGMVARjDGQl6MVobQa8MZRX+8ySKJDGIZxhiGy6/0Jpe+9GcsQ6hhFIX0ZewP7ItLDvzwwhdfggjHUY/WjxrG/pgcwEDE7w66MQ5fvAjBC3+6o505hlA0LbYv4xlDeFtGXAx8Uh7PcEYwsZ/QfwTYdoJPUO4gnwH0PWgG2rApm1EMZxB9qfsQYnsAA0YFRpsjxzHZn4EvN42lFi/qGM7QB/HhDOfaEPrSD8uO8rh3Pe6kB26vn6H7Qchos/5/Sj9cAAA=) format('woff2');}</style>
+<!-- la prima foto e' l'unica che serve al primo fotogramma: parte subito, prima del CSS -->
+<link rel="preload" as="image" href="assets/foto/hero-felpa-fivestars.webp" fetchpriority="high">
+<link rel="stylesheet" href="styles.css?v=10">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -61,7 +66,7 @@
   ]
 }
 </script>
-<script src="script.js?v=2" defer></script>
+<script src="script.js?v=10" defer></script>
 </head>
 <body>
 <!--
@@ -190,14 +195,14 @@
       </div>
       <figure class="plane photo tall" data-dz="500" data-x="-21" data-y="-3" data-xm="-8" data-ym="-24">
         <button class="zoom" type="button" data-url="https://ilmessicanofficial.com/products/opera-darte-by-il-messicano" aria-label="Ingrandisci: Quadro incorniciato con la fotografia di una moto da enduro">
-        <img src="assets/foto/quadro.webp" width="900" height="1074" loading="lazy" decoding="async"
+        <img data-src="assets/foto/quadro.webp" width="900" height="1074" loading="lazy" decoding="async"
              alt="Quadro incorniciato con la fotografia di una moto da enduro">
         </button>
         <figcaption class="cartellino destra"><b>Opera d&rsquo;Arte by il Messicano</b><span class="eur">34,99 €</span></figcaption>
       </figure>
       <figure class="plane photo small" data-dz="300" data-x="-34" data-y="22" data-xm="24" data-ym="-24">
         <button class="zoom" type="button" data-url="https://ilmessicanofficial.com/products/adesivi-calienti-del-messicano-%F0%9F%94%A5" aria-label="Ingrandisci: Buste di adesivi del Messicano su fondo scuro">
-        <img src="assets/foto/adesivi.webp" width="700" height="1050" loading="lazy" decoding="async"
+        <img data-src="assets/foto/adesivi.webp" width="500" height="750" loading="lazy" decoding="async"
              alt="Buste di adesivi del Messicano su fondo scuro">
         </button>
         <figcaption class="cartellino"><b>Adesivi Calienti</b><span class="eur"><s>14,99 €</s>12,99 €</span></figcaption>
@@ -237,28 +242,28 @@
       </div>
       <figure class="plane photo tall" data-dz="540" data-x="22" data-y="-3" data-xm="8" data-ym="-28">
         <button class="zoom" type="button" data-url="https://ilmessicanofficial.com/products/maglietta-onlyfuego-1" aria-label="Ingrandisci: Maglietta nera Criminal indossata, stampa piccola sul petto">
-        <img src="assets/foto/maglia-criminal.webp" width="896" height="1195" loading="lazy" decoding="async"
+        <img data-src="assets/foto/maglia-criminal.webp" width="896" height="1195" loading="lazy" decoding="async"
              alt="Maglietta nera Criminal indossata, stampa piccola sul petto">
         </button>
         <figcaption class="cartellino"><b>Maglia Criminal</b><span class="eur"><s>39,99 €</s>34,99 €</span></figcaption>
       </figure>
       <figure class="plane photo small" data-dz="300" data-x="34" data-y="23" data-xm="-26" data-ym="-30">
         <button class="zoom" type="button" data-url="https://ilmessicanofficial.com/products/felpa-2-stroke-criminal" aria-label="Ingrandisci: Due felpe nere 2 Stroke Criminal, fronte e retro">
-        <img src="assets/foto/felpa-2stroke.webp" width="900" height="973" loading="lazy" decoding="async"
+        <img data-src="assets/foto/felpa-2stroke.webp" width="500" height="540" loading="lazy" decoding="async"
              alt="Due felpe nere 2 Stroke Criminal, fronte e retro">
         </button>
         <figcaption class="cartellino"><b>Felpa 2 Stroke Criminal</b><span class="eur">59,99 €</span></figcaption>
       </figure>
       <figure class="plane photo small" data-dz="880" data-x="-80" data-y="-36" data-xm="-62" data-ym="-36">
         <button class="zoom" type="button" data-url="https://ilmessicanofficial.com/products/felpa-five-stars" aria-label="Ingrandisci: Felpa nera con cappuccio e scritta Too Fast for Chicas">
-        <img src="assets/foto/felpa-chicas.webp" width="800" height="1067" loading="lazy" decoding="async"
+        <img data-src="assets/foto/felpa-chicas.webp" width="500" height="667" loading="lazy" decoding="async"
              alt="Felpa nera con cappuccio e scritta Too Fast for Chicas">
         </button>
         <figcaption class="cartellino destra"><b>Felpa Too Fast for Chicas</b><span class="eur">79,99 €</span></figcaption>
       </figure>
       <figure class="plane photo small" data-dz="1220" data-x="92" data-y="-40" data-xm="66" data-ym="-44">
         <button class="zoom" type="button" data-url="https://ilmessicanofficial.com/products/cappellino-limited-edition" aria-label="Ingrandisci: Cappellino nero con lo stemma del Messicano ricamato">
-        <img src="assets/foto/cappellino.webp" width="700" height="929" loading="lazy" decoding="async"
+        <img data-src="assets/foto/cappellino.webp" width="500" height="664" loading="lazy" decoding="async"
              alt="Cappellino nero con lo stemma del Messicano ricamato">
         </button>
         <figcaption class="cartellino"><b>Cappellino Limited Edition</b><span class="eur">29,99 €</span></figcaption>
@@ -280,28 +285,28 @@
       </div>
       <figure class="plane photo tall" data-dz="560" data-x="-22" data-y="-3" data-xm="-8" data-ym="-22">
         <button class="zoom" type="button" data-url="https://ilmessicanofficial.com/products/guanti-fuego" aria-label="Ingrandisci: Guanti neri Fuego con le dita stampate in bianco">
-        <img src="assets/foto/guanti-fuego.webp" width="896" height="1195" loading="lazy" decoding="async"
+        <img data-src="assets/foto/guanti-fuego.webp" width="896" height="1195" loading="lazy" decoding="async"
              alt="Guanti neri Fuego con le dita stampate in bianco">
         </button>
         <figcaption class="cartellino destra"><b>Guanti Fuego</b><span class="eur"><s>39,99 €</s>29,99 €</span></figcaption>
       </figure>
       <figure class="plane photo small" data-dz="300" data-x="-35" data-y="23" data-xm="24" data-ym="-24">
         <button class="zoom" type="button" data-url="https://ilmessicanofficial.com/products/occhiali-calienti-lente-sfumata-blu" aria-label="Ingrandisci: Occhiali sportivi a lente unica specchiata gialla">
-        <img src="assets/foto/occhiali.webp" width="700" height="929" loading="lazy" decoding="async"
+        <img data-src="assets/foto/occhiali.webp" width="500" height="664" loading="lazy" decoding="async"
              alt="Occhiali sportivi a lente unica specchiata gialla">
         </button>
         <figcaption class="cartellino"><b>Occhiali Criminal</b><span class="eur"><s>49,99 €</s>39,99 €</span></figcaption>
       </figure>
       <figure class="plane photo small" data-dz="900" data-x="80" data-y="-36" data-xm="62" data-ym="-36">
         <button class="zoom" type="button" data-url="https://ilmessicanofficial.com/products/mascherine-del-messicano-doppia-lente" aria-label="Ingrandisci: Due mascherine da cross, una con lente scura e una con lente arancione">
-        <img src="assets/foto/mascherine.webp" width="900" height="1084" loading="lazy" decoding="async"
+        <img data-src="assets/foto/mascherine.webp" width="500" height="602" loading="lazy" decoding="async"
              alt="Due mascherine da cross, una con lente scura e una con lente arancione">
         </button>
         <figcaption class="cartellino destra"><b>Mascherine Criminal</b><span class="eur"><s>74,99 €</s>64,99 €</span></figcaption>
       </figure>
       <figure class="plane photo small" data-dz="1240" data-x="-92" data-y="-40" data-xm="-66" data-ym="-44">
         <button class="zoom" type="button" data-url="https://ilmessicanofficial.com/products/gilet-del-messicano" aria-label="Ingrandisci: Gilet nero imbottito con lo stemma del Messicano sul petto">
-        <img src="assets/foto/gilet.webp" width="800" height="1067" loading="lazy" decoding="async"
+        <img data-src="assets/foto/gilet.webp" width="500" height="667" loading="lazy" decoding="async"
              alt="Gilet nero imbottito con lo stemma del Messicano sul petto">
         </button>
         <figcaption class="cartellino"><b>Gilet del Messicano</b><span class="eur">59,99 €</span></figcaption>
@@ -324,28 +329,28 @@
       </div>
       <figure class="plane photo frame" data-dz="260" data-x="-44" data-y="-6" data-xm="-40" data-ym="-28" data-ry="62">
         <button class="zoom" type="button" data-url="https://ilmessicanofficial.com/products/paracolpi-del-messicano" aria-label="Ingrandisci: Quattro paracolpi da manubrio nei colori nero, blu, rosso e arancione">
-        <img src="assets/foto/paracolpi-tutti.webp" width="1100" height="784" loading="lazy" decoding="async"
+        <img data-src="assets/foto/paracolpi-tutti.webp" width="800" height="570" loading="lazy" decoding="async"
              alt="Quattro paracolpi da manubrio nei colori nero, blu, rosso e arancione">
         </button>
         <figcaption class="cartellino"><b>Paracolpi con traversino</b><span class="eur"><s>44,99 €</s>29,99 €</span></figcaption>
       </figure>
       <figure class="plane photo frame" data-dz="620" data-x="44" data-y="-4" data-xm="40" data-ym="-30" data-ry="-62">
         <button class="zoom" type="button" data-url="https://ilmessicanofficial.com/products/carter-stark-varg" aria-label="Ingrandisci: Carter in alluminio lucido per Stark Varg">
-        <img src="assets/foto/carter-stark.webp" width="800" height="1067" loading="lazy" decoding="async"
+        <img data-src="assets/foto/carter-stark.webp" width="800" height="1067" loading="lazy" decoding="async"
              alt="Carter in alluminio lucido per Stark Varg">
         </button>
         <figcaption class="cartellino"><b>Carter Stark Varg</b><span class="eur"><s>229,99 €</s>219,99 €</span></figcaption>
       </figure>
       <figure class="plane photo frame" data-dz="980" data-x="-52" data-y="-2" data-xm="-40" data-ym="-34" data-ry="62">
         <button class="zoom" type="button" data-url="https://ilmessicanofficial.com/products/leve-freno-e-frizione-beta-rr-50cc" aria-label="Ingrandisci: Pedane e leve in alluminio anodizzato rosso per Beta RR">
-        <img src="assets/foto/pedane-beta.webp" width="800" height="1067" loading="lazy" decoding="async"
+        <img data-src="assets/foto/pedane-beta.webp" width="800" height="1067" loading="lazy" decoding="async"
              alt="Pedane e leve in alluminio anodizzato rosso per Beta RR">
         </button>
         <figcaption class="cartellino"><b>Pedane Beta RR 50cc e 125 4T</b><span class="eur">64,99 €</span></figcaption>
       </figure>
       <figure class="plane photo frame" data-dz="1340" data-x="50" data-y="-2" data-xm="40" data-ym="-36" data-ry="-62">
         <button class="zoom" type="button" data-url="https://ilmessicanofficial.com/products/ammortizzatore-cavalletto-vespa" aria-label="Ingrandisci: Ammortizzatore per cavalletto Vespa con la sua minuteria">
-        <img src="assets/foto/ammortizzatore.webp" width="800" height="800" loading="lazy" decoding="async"
+        <img data-src="assets/foto/ammortizzatore.webp" width="800" height="800" loading="lazy" decoding="async"
              alt="Ammortizzatore per cavalletto Vespa con la sua minuteria">
         </button>
         <figcaption class="cartellino"><b>Ammortizzatore cavalletto Vespa</b><span class="eur">109,99 €</span></figcaption>
@@ -367,21 +372,21 @@
       </div>
       <figure class="plane photo square" data-dz="520" data-x="23" data-y="-2" data-xm="0" data-ym="-30">
         <button class="zoom" type="button" data-url="https://ilmessicanofficial.com/products/mystery-box-del-messicano" aria-label="Ingrandisci: Scatola aperta piena di prodotti del Messicano, con il cartello Mystery Box">
-        <img src="assets/foto/mystery-box.webp" width="900" height="900" loading="lazy" decoding="async"
+        <img data-src="assets/foto/mystery-box.webp" width="900" height="900" loading="lazy" decoding="async"
              alt="Scatola aperta piena di prodotti del Messicano, con il cartello Mystery Box">
         </button>
         <figcaption class="cartellino"><b>Mystery Box</b><span class="eur">99,99 €</span></figcaption>
       </figure>
       <figure class="plane photo small" data-dz="300" data-x="36" data-y="24" data-xm="-26" data-ym="-26">
         <button class="zoom" type="button" data-url="https://ilmessicanofficial.com/products/buono-regalo-messicano" aria-label="Ingrandisci: Tre buoni regalo del Messicano da 50, 100 e 150 euro">
-        <img src="assets/foto/buono-regalo.webp" width="800" height="800" loading="lazy" decoding="async"
+        <img data-src="assets/foto/buono-regalo.webp" width="500" height="500" loading="lazy" decoding="async"
              alt="Tre buoni regalo del Messicano da 50, 100 e 150 euro">
         </button>
         <figcaption class="cartellino"><b>Buono regalo</b><span class="eur">da 50,00 €</span></figcaption>
       </figure>
       <figure class="plane photo small" data-dz="900" data-x="-80" data-y="-36" data-xm="-62" data-ym="-36">
         <button class="zoom" type="button" data-url="https://ilmessicanofficial.com/products/marsupio-del-messicano" aria-label="Ingrandisci: Marsupio nero del Messicano con dettagli rossi">
-        <img src="assets/foto/marsupio.webp" width="800" height="800" loading="lazy" decoding="async"
+        <img data-src="assets/foto/marsupio.webp" width="500" height="500" loading="lazy" decoding="async"
              alt="Marsupio nero del Messicano con dettagli rossi">
         </button>
         <figcaption class="cartellino destra"><b>Marsupio del Messicano</b><span class="eur"><s>34,99 €</s>28,99 €</span></figcaption>
@@ -405,19 +410,19 @@
       <div class="plane photo feed" data-dz="520" data-x="23" data-y="-2" data-xm="0" data-ym="-30">
         <ul class="feed-griglia">
           <li><a href="https://www.instagram.com/ilmessicanofficial/" target="_blank" rel="noopener" aria-label="Vedi su Instagram: maglia Enduro grigia e nera del Messicano">
-            <img src="assets/foto/maglia-enduro.webp" width="800" height="1067" loading="lazy" decoding="async" alt="Maglia Enduro grigia e nera del Messicano">
+            <img data-src="assets/foto/maglia-enduro.webp" width="550" height="734" loading="lazy" decoding="async" alt="Maglia Enduro grigia e nera del Messicano">
             <span class="feed-velo" aria-hidden="true"><svg><use href="#ig"/></svg></span>
           </a></li>
           <li><a href="https://www.instagram.com/ilmessicanofficial/" target="_blank" rel="noopener" aria-label="Vedi su Instagram: costume da bagno nero del Messicano">
-            <img src="assets/foto/costume.webp" width="700" height="977" loading="lazy" decoding="async" alt="Costume da bagno nero del Messicano">
+            <img data-src="assets/foto/costume.webp" width="550" height="768" loading="lazy" decoding="async" alt="Costume da bagno nero del Messicano">
             <span class="feed-velo" aria-hidden="true"><svg><use href="#ig"/></svg></span>
           </a></li>
           <li><a href="https://www.instagram.com/ilmessicanofficial/" target="_blank" rel="noopener" aria-label="Vedi su Instagram: calzini neri Criminal">
-            <img src="assets/foto/calzini.webp" width="700" height="828" loading="lazy" decoding="async" alt="Calzini neri Criminal">
+            <img data-src="assets/foto/calzini.webp" width="550" height="650" loading="lazy" decoding="async" alt="Calzini neri Criminal">
             <span class="feed-velo" aria-hidden="true"><svg><use href="#ig"/></svg></span>
           </a></li>
           <li><a href="https://www.instagram.com/ilmessicanofficial/" target="_blank" rel="noopener" aria-label="Vedi su Instagram: paracolpi da manubrio nei quattro colori">
-            <img src="assets/foto/paracolpi-tutti.webp" width="1100" height="784" loading="lazy" decoding="async" alt="Paracolpi da manubrio nei quattro colori">
+            <img data-src="assets/foto/paracolpi-tutti.webp" width="800" height="570" loading="lazy" decoding="async" alt="Paracolpi da manubrio nei quattro colori">
             <span class="feed-velo" aria-hidden="true"><svg><use href="#ig"/></svg></span>
           </a></li>
         </ul>

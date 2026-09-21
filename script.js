@@ -3,6 +3,9 @@
 
   const root = document.documentElement;
   const is3d = root.classList.contains('is-3d');
+  // Le foto lontane non hanno ancora una src (le assegna render() quando la camera arriva):
+  // chi legge l'indirizzo di una foto passa da qui, cosi' non resta mai a mani vuote.
+  const fonte = (img) => (img && (img.currentSrc || img.getAttribute('src') || img.dataset.src)) || '';
   const K = 1; // unità Z per pixel di scroll
   const sections = [...document.querySelectorAll('.ch')];
   const chapters = sections.map((el) => ({
@@ -141,7 +144,7 @@
       event.stopPropagation();
       const name = label.textContent.trim();
       const variant = variantSelect ? `Taglia ${variantSelect.value}` : 'Unica';
-      cart.add({ id: button.dataset.url, name, price: prezzoDaTesto(price.textContent), image: button.querySelector('img').src, variant, qty: 1 });
+      cart.add({ id: button.dataset.url, name, price: prezzoDaTesto(price.textContent), image: fonte(button.querySelector('img')), variant, qty: 1 });
     });
     photo.querySelector('.cartellino').append(addButton);
     const detailsButton = document.createElement('button');
@@ -151,7 +154,7 @@
     detailsButton.addEventListener('click', (event) => {
       event.stopPropagation();
       const dialog = document.querySelector('#prodotto-dialog');
-      dialog.querySelector('.prodotto-img').src = button.querySelector('img').currentSrc || button.querySelector('img').src;
+      dialog.querySelector('.prodotto-img').src = fonte(button.querySelector('img'));
       dialog.querySelector('.prodotto-img').alt = button.querySelector('img').alt;
       dialog.querySelector('#prodotto-titolo').textContent = label.textContent.trim();
       dialog.querySelector('.prodotto-prezzo').textContent = price.textContent.trim();
@@ -193,7 +196,7 @@
     const lLink = luce.querySelector('.luce-link');
     document.querySelectorAll('.photo .zoom').forEach((b) => b.addEventListener('click', () => {
       const img = b.querySelector('img');
-      lImg.src = img.currentSrc || img.src;
+      lImg.src = fonte(img);
       lImg.alt = img.alt;
       const t = b.closest('figure').querySelector('.cartellino');
       lTesto.textContent = t ? t.querySelector('b').textContent : img.alt;
@@ -210,6 +213,11 @@
   }
 
   if (!is3d) {
+    // pagina verticale vera: qui loading="lazy" funziona come previsto, quindi basta dare la src
+    document.querySelectorAll('img[data-src]').forEach((img) => {
+      img.src = img.dataset.src;
+      img.removeAttribute('data-src');
+    });
     goTo = (id, { instant = false } = {}) => {
       const ch = byId(id);
       if (!ch) return false;
@@ -270,6 +278,9 @@
         far: kind === 'copy' ? 1000 : kind === 'deco' ? 900 : 1500,
         back: kind === 'deco' ? 700 : 320,
         o: -1, live: false,
+        // foto non ancora scaricate: partono quando la camera si avvicina (vedi ANTICIPO).
+        // Sono piu' di una per piano nella griglia di Instagram, quindi e' un elenco.
+        imgs: [...el.querySelectorAll('img[data-src]')],
       });
     });
   });
@@ -293,9 +304,25 @@
     return Math.max(0, 1 - (d - 180) / p.far);
   }
 
+  // Quanto prima della sua comparsa una foto viene scaricata. Una foto inizia a schiarire
+  // a d = 1680 (180 + far), quindi 1800 lascia un margine e al primo fotogramma tiene in
+  // piedi solo la prima tappa: si parte con una foto invece di ventuno.
+  const ANTICIPO = 1800;
+
   function render() {
     for (const p of planes) {
       const d = p.z - cam;
+      if (p.imgs && d < ANTICIPO) {
+        for (const img of p.imgs) {
+          // loading="lazy" serve alla versione piatta; qui deciderebbe il browser in base alla
+          // posizione nel documento, che in profondita' non vuol dire niente: le foto lontane
+          // dal centro non partivano mai. Da qui in poi il momento lo scegliamo noi.
+          img.removeAttribute('loading');
+          img.src = img.dataset.src;
+          img.removeAttribute('data-src');
+        }
+        p.imgs = null;
+      }
       const o = opacityFor(p, d);
       if (o === 0 && p.o === 0) continue;
       const dz = Math.min(Math.max(d, -p.back - 80), 4200);
